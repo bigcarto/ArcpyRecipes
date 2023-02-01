@@ -1,0 +1,12 @@
+import arcpy
+tabla = "V:\\HABITATS\\Tabla_Lista_Habitats_Interes_Comunitario.dbf"
+capa_habitats ="V:\\HABITATS\\Habitats_Interes_Comunitario_5000.shp"
+with arcpy.da.SearchCursor(tabla, ['code_ue']) as cursor:
+    for row in cursor:
+        print(row[0])
+        tabla = "tabla_" + row[0]
+        arcpy.management.MakeTableView("V:\\HABITATS\\Tabla_teselas_habitats.dbf", tabla, where_clause = "code_ue = \'" + row[0] + "\'")
+        codue= "codue_" + row[0]
+        arcpy.management.MakeFeatureLayer(capa_habitats, codue)
+        arcpy.management.AddJoin(codue, "id_pol", tabla, "id_pol", 'KEEP_COMMON')
+        arcpy.management.CopyFeatures(codue,"V:\\HABITATS\\HABITATS_SEPARADOS\\Habitat_" + row[0] )
